@@ -4,6 +4,7 @@ import com.back.domain.system.controller.SystemController;
 import com.back.domain.wiseSaying.entity.WiseSaying;
 import com.back.domain.wiseSaying.service.WiseSayingService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -56,7 +57,7 @@ public class WiseSayingController {
             }
             else if(command.equals("목록"))
             {
-                printList();
+                printList(params);
             }
             else if(command.contains("삭제"))
             {
@@ -122,10 +123,62 @@ public class WiseSayingController {
         wservice.modify(ws.getIdx(), afterContent, afterAuthor);
     }
 
-    void printList()
+    void printList(String params)
     {
+        StringBuilder answer  = new StringBuilder();
+        if(!params.equals(""))
+        {
+            //명령) 목록?keywordType=author&keyword=작자
+            //----------------------
+            //검색타입 : author
+            //검색어 : 작자
+            //----------------------
+            //번호 / 작가 / 명언
+            //----------------------
+            //2 / 작자미상 / 과거에 집착하지 마라.
+            //1 / 작자미상 / 현재를 사랑하라.
+            List<String[]> keyValues = SystemController.parsing(params);
+            System.out.println("------------------------");
+            String type = "";
+            String param = "";
+            for(String[] kv : keyValues)
+            {
+                String key = kv[0];
+                String value = kv[1];
+                switch (key)
+                {
+                    case "keywordType":
+                        System.out.println("검색타입 : "+value);
+                        type = value;
+                        break;
+                    case "keyword":
+                        System.out.println("검색어 : "+value);
+                        param = value;
+                        break;
+                }
+            }
+            System.out.println("------------------------");
+            List<WiseSaying> wList = null;
+            switch(type)
+            {
+                case "content":
+                    wList = wservice.contentFindByKeyword(param);
+                    break;
+                case "author":
+                    wList = wservice.authorFindByKeyword(param);
+                    break;
+            }
+            if(wList!=null)
+            {
+                for(int i=wList.size()-1; i>=0; i--)answer.append(wList.get(i));
+            }
+        }
+        else{
+            answer.append(wservice.print());
+        }
         System.out.println("번호 / 작가 / 명언");
         System.out.println("------------------------");
-        System.out.println(wservice.print());
+        System.out.println(answer.toString());
+
     }
 }

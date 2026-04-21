@@ -35,7 +35,15 @@ public class WiseSayingRepository {
         int idx = indexOf(index);
         return mydb.get(idx);
     }
-
+    public List<WiseSaying> contentFindByKeyword(String keyword) {
+        List<WiseSaying> answer = new ArrayList<>();
+        for(WiseSaying ws : mydb)
+        {
+            if(ws.getContent().contains(keyword))
+                answer.add(ws);
+        }
+        return answer;
+    }
     public void modify(int index, String content, String author)
     {
         WiseSaying ws;
@@ -95,5 +103,15 @@ public class WiseSayingRepository {
             if(mydb.get(i).getIdx() == index) return i;
         }
         return -1;
+    }
+
+    public List<WiseSaying> authorFindByKeyword(String param) {
+        List<WiseSaying> answer = new ArrayList<>();
+        for(WiseSaying ws : mydb)
+        {
+            if(ws.getAuthor().contains(param))
+                answer.add(ws);
+        }
+        return answer;
     }
 }

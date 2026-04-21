@@ -28,6 +28,10 @@ public class WiseSayingService {
         }
         return sb.toString();
     }
+    public List<WiseSaying> contentFindByKeyword(String keyword)
+    {
+        return repo.contentFindByKeyword(keyword);
+    }
     public String regist(String query)
     {
         String[] splited = query.split(",");
@@ -76,5 +80,9 @@ public class WiseSayingService {
     public void modify(int id, String content, String author)
     {
         repo.modify(id,content,author);
+    }
+
+    public List<WiseSaying> authorFindByKeyword(String param) {
+        return repo.authorFindByKeyword(param);
     }
 }
