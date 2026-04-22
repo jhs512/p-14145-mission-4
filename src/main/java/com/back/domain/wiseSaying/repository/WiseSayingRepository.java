@@ -115,6 +115,7 @@ public class WiseSayingRepository {
         return answer;
     }
 
+
     public List<WiseSaying> getPage(int pageNum) {
         int page = pageNum * PAGE_MAX_ELEMENT;
         List<WiseSaying> answer = new ArrayList<>();
@@ -123,6 +124,6 @@ public class WiseSayingRepository {
     }
 
     public int getCntPages(){
-        return mydb.size()/PAGE_MAX_ELEMENT;
+        return (int)Math.ceil((double)mydb.size()/PAGE_MAX_ELEMENT);
     }
 }

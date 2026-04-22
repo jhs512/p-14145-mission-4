@@ -4,6 +4,7 @@ import com.back.domain.system.controller.SystemController;
 import com.back.domain.wiseSaying.entity.WiseSaying;
 import com.back.domain.wiseSaying.repository.WiseSayingRepository;
 
+import javax.management.ListenerNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,8 +66,40 @@ public class WiseSayingService {
                 break;
             case "keywordType":
                 break;
-            case "keyWord":
+            case "keyword":
                 break;
+        }
+        return answer;
+    }
+
+    public List<WiseSaying> getPage(int pageNum, String keywordType, String keyword) {
+        List<WiseSaying> answer;
+        if(keywordType == null) keywordType = "";
+
+        switch(keywordType)
+        {
+            case "content":
+                answer = repo.contentFindByKeyword(keyword);
+                break;
+            case "author":
+                answer = repo.authorFindByKeyword(keyword);
+                break;
+            default:
+                answer = getPage(pageNum);
+        }
+        answer = sepPage(answer,pageNum);
+        return answer;
+    }
+
+    public List<WiseSaying> sepPage(List<WiseSaying> list, int pageNum)
+    {
+        List<WiseSaying> answer = new ArrayList<>();
+        if(list.size() == 0)return list;
+        int i = Math.max(list.size()-WiseSayingRepository.PAGE_MAX_ELEMENT*pageNum, 0);
+        int end = (list.size()-1)/pageNum;
+        for(;i<=end;i++)
+        {
+            answer.add(list.get(i));
         }
         return answer;
     }

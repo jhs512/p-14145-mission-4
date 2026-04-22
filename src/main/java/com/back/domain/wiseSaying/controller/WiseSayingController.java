@@ -127,75 +127,45 @@ public class WiseSayingController {
     {
         StringBuilder answer  = new StringBuilder();
         List<WiseSaying> wList = null;
+        HashMap<String, String> mapping = new HashMap<>();
         int totalPages = wservice.getCntPages();
         int page = 1;
-
-        //명령) 목록
-        //번호 / 작가 / 명언
-        //----------------------
-        //10 / 작자미상 10 / 명언 10
-        //9 / 작자미상 9 / 명언 9
-        //8 / 작자미상 8 / 명언 8
-        //7 / 작자미상 7 / 명언 7
-        //6 / 작자미상 6 / 명언 6
-        //----------------------
-        //페이지 : [1] / 2
         if(!params.equals(""))
         {
             boolean checkType = false;
             List<String[]> keyValues = SystemController.parsing(params);
             StringBuilder searchTypeString = new StringBuilder();
+
             searchTypeString.append("------------------------\n");
-            String type = "";
-            String param = "";
             for(String[] kv : keyValues)
             {
                 String key = kv[0];
                 String value = kv[1];
+                mapping.put(key,value);
                 switch (key)
                 {
                     case "keywordType":
                         searchTypeString.append("검색타입 : "+value+"\n");
                         checkType = true;
-                        type = value;
                         break;
                     case "keyword":
                         searchTypeString.append("검색어 : "+value+"\n");
                         checkType = true;
-                        param = value;
                         break;
                     case "page":
-                        type = key;
                         page = Integer.parseInt(value);
-
                 }
             }
             searchTypeString.append("------------------------\n");
             if(checkType) answer.append(searchTypeString.toString());
-            switch(type)
-            {
-                case "content":
-                    wList = wservice.contentFindByKeyword(param);
-                    break;
-                case "author":
-                    wList = wservice.authorFindByKeyword(param);
-                    break;
-                case "page":
-                default:
-                    page = wservice.possiblePage(page);
-                    wList = wservice.getPage(page);
-                    break;
-            }
-            if(wList!=null)
-            {
-                for(int i=wList.size()-1; i>=0; i--)answer.append(wList.get(i));
-            }
+
+            wList = wservice.getPage(page, mapping.get("keywordType"), mapping.get("keyword"));
         }
         else{
             page = wservice.possiblePage(page);
             wList = wservice.getPage(page);
-            for(int i=wList.size()-1; i>=0; i--)answer.append(wList.get(i));
         }
+        for(int i=wList.size()-1; i>=0; i--)answer.append(wList.get(i));
         answer.append("------------------------\n")
                         .append("페이지 : ");
         for(int i = 1; i <= totalPages; i++)

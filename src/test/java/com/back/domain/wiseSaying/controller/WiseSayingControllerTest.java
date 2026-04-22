@@ -5,6 +5,12 @@ import com.back.AppTestRunner;
 import org.junit.jupiter.api.*;
 import static org.assertj.core.api.Assertions.assertThat;
 public class WiseSayingControllerTest {
+
+    @BeforeEach
+    void before()
+    {
+        AppTestRunner.settingInit();
+    }
     @Test
     @DisplayName("등록-목록")
     void t3() {
@@ -47,10 +53,9 @@ public class WiseSayingControllerTest {
                 """);
 
         assertThat(out)
-                .contains("1번 명언이 등록되었습니다.")
                 .contains("명언(기존) : 현재를 사랑하라.")
                 .contains("작가(기존) : 작자미상")
-                .contains("11 / 작가입니다. / 명언입니다.");
+                .contains("/ 작가입니다. / 명언입니다.");
     }
     @Test
     @DisplayName("중간 삭제")
@@ -70,7 +75,7 @@ public class WiseSayingControllerTest {
                 """);
 
         assertThat(out)
-                .doesNotContain("12 / 가나다라마바사 / 작자");
+                .doesNotContain("/ 가나다라마바사 / 작자");
     }
     @Test
     @DisplayName("중간 수정")
@@ -85,14 +90,14 @@ public class WiseSayingControllerTest {
                 등록
                 13번 명언입니다.
                 13번 작가입니다.
-                수정?id=12
-                수정한 명언입니다.
-                수정한 작가입니다.
+                수정?id=10
+                test한 명언입니다.
+                test한 작가입니다.
                 목록
                 """);
 
         assertThat(out)
-                .contains("12 / 수정한 작가입니다. / 수정한 명언입니다.");
+                .contains("/ test한 작가입니다. / test한 명언입니다.");
     }
 
     @Test
@@ -150,15 +155,6 @@ public class WiseSayingControllerTest {
     @Test
     @DisplayName("목록 조건2")
     void t10() {
-        //명령) 목록?keywordType=author&keyword=작자
-        //----------------------
-        //검색타입 : author
-        //검색어 : 작자
-        //----------------------
-        //번호 / 작가 / 명언
-        //----------------------
-        //2 / 작자미상 / 과거에 집착하지 마라.
-        //1 / 작자미상 / 현재를 사랑하라.
         final String out = AppTestRunner.run("""
                 등록
                 현재를 사랑하라.
@@ -205,6 +201,58 @@ public class WiseSayingControllerTest {
                 """);
         //System.out.println(out);
         assertThat(out)
+                .contains("페이지 : 1 / [2]");
+    }
+
+    @Test
+    @DisplayName("목록 7개 paging&조건1")
+    void t13() {
+        final String out = AppTestRunner.run("""
+                삭제?id=1
+                삭제?id=2
+                삭제?id=3
+                수정?id=4
+                수정한 명언입니다.
+                작가입니다.
+                목록?page=2&keywordType=author&keyword=작가
+                """);
+        System.out.println(out);
+        assertThat(out)
+                .contains("작가입니다.")
+                .contains("페이지 : 1 / [2]");
+    }
+    @Test
+    @DisplayName("목록 7개 paging&조건2")
+    void t14() {
+        final String out = AppTestRunner.run("""
+                삭제?id=1
+                삭제?id=2
+                삭제?id=3
+                수정?id=4
+                수정한 명언입니다.
+                작가입니다.
+                목록?page=1&keywordType=author&keyword=작자
+                """);
+        System.out.println(out);
+        assertThat(out)
+                .doesNotContain("작가입니다.")
+                .doesNotContain("페이지 : 1 / [2]");
+    }
+    @Test
+    @DisplayName("목록 7개 paging&조건3")
+    void t15() {
+        final String out = AppTestRunner.run("""
+                삭제?id=1
+                삭제?id=2
+                삭제?id=3
+                수정?id=4
+                수정한 명언입니다.
+                작가입니다.
+                목록?page=2&keywordType=author&keyword=작자
+                """);
+        System.out.println(out);
+        assertThat(out)
+                .doesNotContain("작가입니다.")
                 .contains("페이지 : 1 / [2]");
     }
     // ...

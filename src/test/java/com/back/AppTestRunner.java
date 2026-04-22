@@ -1,5 +1,6 @@
 package com.back;
 
+import com.back.domain.wiseSaying.entity.WiseSaying;
 import com.back.standard.util.TestUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -16,5 +17,8 @@ public class AppTestRunner {
         TestUtil.clearSetOutToByteArray();
         return out;
 
+    }
+    public static void settingInit(){
+        WiseSaying.num = 1;
     }
 }
