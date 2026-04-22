@@ -1,0 +1,114 @@
+package com.back.domain.wiseSaying.repository;
+
+import com.back.domain.wiseSaying.entity.WiseSaying;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+
+//com.back.domain.wiseSaying.repository.WiseSayingRepository.java
+//역할 : 데이터의 조회/수정/삭제/생성을 담당
+//스캐너 사용금지, 출력 금지
+public class WiseSayingRepository {
+    List<WiseSaying> mydb;
+    public final static int PAGE_MAX_ELEMENT = 5;
+
+    public WiseSayingRepository()
+    {
+        mydb = new ArrayList<>();
+        for(int i=0; i<10;i++)mydb.add(new WiseSaying());
+    }
+
+
+    public WiseSaying get(int id)
+    {
+        if(!contains(id)) return null;
+        int index = indexOf(id);
+        return mydb.get(index);
+    }
+    public List<WiseSaying> getAll()
+    {
+        return this.mydb;
+    }
+
+    public List<WiseSaying> contentFindByKeyword(String keyword) {
+        List<WiseSaying> answer = new ArrayList<>();
+        for(WiseSaying ws : mydb)
+        {
+            if(ws.getContent().contains(keyword))
+                answer.add(ws);
+        }
+        return answer;
+    }
+    public void modify(int index, String content, String author)
+    {
+        WiseSaying ws;
+        if(!contains(index))return;
+        int idx = indexOf(index);
+        ws = mydb.get(idx);
+        ws.setContent(content);
+        ws.setAuthor(author);
+    }
+    public void insert(String content, String author)
+    {
+        mydb.add(new WiseSaying(content,author));
+    }
+
+    public void insert(String content)
+    {
+        mydb.add(new WiseSaying(content, "작자미상" + WiseSaying.num));
+    }
+    public void insert(WiseSaying ws)
+    {
+        mydb.add(ws);
+    }
+    public String delete(int index)
+    {
+        String answer = index+"번 명언은 존재하지 않습니다.";
+        if(!contains(index)) return answer;
+        int idx = indexOf(index);
+        mydb.remove(idx);
+        answer = index+"번 명언이 삭제되었습니다.";
+        return answer;
+    }
+
+    private boolean contains(int idx)
+    {
+        for(WiseSaying ws : mydb)
+        {
+            if(ws.getIdx() == idx) return true;
+        }
+        return false;
+    }
+
+    private int indexOf(int index)
+    {
+        for(int i=0; i<mydb.size(); i++)
+        {
+            if(mydb.get(i).getIdx() == index) return i;
+        }
+        return -1;
+    }
+
+    public List<WiseSaying> authorFindByKeyword(String param) {
+        List<WiseSaying> answer = new ArrayList<>();
+        for(WiseSaying ws : mydb)
+        {
+            if(ws.getAuthor().contains(param))
+                answer.add(ws);
+        }
+        return answer;
+    }
+
+
+    public List<WiseSaying> getPage(int pageNum) {
+        int page = pageNum * PAGE_MAX_ELEMENT;
+        List<WiseSaying> answer = new ArrayList<>();
+        for(int i = mydb.size() - page; i <= (mydb.size()-1)/pageNum ; i++) answer.add(mydb.get(i));
+        return answer;
+    }
+
+    public int getCntPages(){
+        return (int)Math.ceil((double)mydb.size()/PAGE_MAX_ELEMENT);
+    }
+}
