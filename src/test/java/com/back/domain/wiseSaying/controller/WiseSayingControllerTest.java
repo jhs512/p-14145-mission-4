@@ -1,7 +1,6 @@
 package com.back.domain.wiseSaying.controller;
 
 import com.back.AppTestRunner;
-//import com.back.global.app.AppConfig;
 import org.junit.jupiter.api.*;
 import static org.assertj.core.api.Assertions.assertThat;
 public class WiseSayingControllerTest {

@@ -4,7 +4,6 @@ import com.back.domain.system.controller.SystemController;
 import com.back.domain.wiseSaying.entity.WiseSaying;
 import com.back.domain.wiseSaying.repository.WiseSayingRepository;
 
-import javax.management.ListenerNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,20 +18,6 @@ public class WiseSayingService {
     {
         repo = new WiseSayingRepository();
     }
-    public String print()
-    {
-        StringBuilder sb = new StringBuilder();
-        List<WiseSaying> dummyList = repo.getAll();
-        for(int i = dummyList.size()-1; i>=0; i--)
-        {
-            sb.append(dummyList.get(i));
-        }
-        return sb.toString();
-    }
-    public List<WiseSaying> contentFindByKeyword(String keyword)
-    {
-        return repo.contentFindByKeyword(keyword);
-    }
     public String regist(String query)
     {
         String[] splited = query.split(",");
@@ -42,11 +27,6 @@ public class WiseSayingService {
         return answer;
     }
 
-    public String search(String query)
-    {
-        String answer = null;
-        return answer;
-    }
     public WiseSaying findById(int id)
     {
         WiseSaying answer = repo.get(id);
@@ -132,7 +112,4 @@ public class WiseSayingService {
         repo.modify(id,content,author);
     }
 
-    public List<WiseSaying> authorFindByKeyword(String param) {
-        return repo.authorFindByKeyword(param);
-    }
 }

@@ -2,7 +2,6 @@ package com.back.domain.wiseSaying.controller;
 
 import com.back.domain.system.controller.SystemController;
 import com.back.domain.wiseSaying.entity.WiseSaying;
-import com.back.domain.wiseSaying.repository.WiseSayingRepository;
 import com.back.domain.wiseSaying.service.WiseSayingService;
 
 import java.util.HashMap;
@@ -107,12 +106,12 @@ public class WiseSayingController {
             System.out.println(index+"번 명언은 존재하지 않습니다.");
             return;
         }
-        String afterContent = "";
+
         //content
+        String afterContent = "";
         System.out.println("명언(기존) : "+ ws.getContent());
         System.out.print("명언 : ");
         afterContent = sc.nextLine().trim();
-
 
         //author
         String afterAuthor = "";
@@ -165,6 +164,7 @@ public class WiseSayingController {
             page = wservice.possiblePage(page);
             wList = wservice.getPage(page);
         }
+
         for(int i=wList.size()-1; i>=0; i--)answer.append(wList.get(i));
         answer.append("------------------------\n")
                         .append("페이지 : ");
