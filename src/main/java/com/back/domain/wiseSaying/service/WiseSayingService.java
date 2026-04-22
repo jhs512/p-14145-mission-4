@@ -71,7 +71,24 @@ public class WiseSayingService {
         return answer;
     }
 
-
+    public List<WiseSaying> getPage(int page)
+    {
+        int pageNum = possiblePage(page);
+        return repo.getPage(pageNum);
+    }
+    public int possiblePage(int page)
+    {
+        int pageNum = 1;
+        if(page <= repo.getCntPages())
+        {
+            pageNum = page;
+        }
+        return pageNum;
+    }
+    public int getCntPages()
+    {
+        return repo.getCntPages();
+    }
     //명령) 수정?id=2
     //명언(기존) : 과거에 집착하지 마라.
     //명언 : 현재와 자신을 사랑하라.

@@ -2,6 +2,7 @@ package com.back.domain.wiseSaying.controller;
 
 import com.back.domain.system.controller.SystemController;
 import com.back.domain.wiseSaying.entity.WiseSaying;
+import com.back.domain.wiseSaying.repository.WiseSayingRepository;
 import com.back.domain.wiseSaying.service.WiseSayingService;
 
 import java.util.HashMap;
@@ -35,7 +36,6 @@ public class WiseSayingController {
         String[] splited;
         String params;
         boolean online = true;
-
 
         System.out.println("== 명언 앱 ==");
         while(online) {
@@ -126,19 +126,26 @@ public class WiseSayingController {
     void printList(String params)
     {
         StringBuilder answer  = new StringBuilder();
+        List<WiseSaying> wList = null;
+        int totalPages = wservice.getCntPages();
+        int page = 1;
+
+        //명령) 목록
+        //번호 / 작가 / 명언
+        //----------------------
+        //10 / 작자미상 10 / 명언 10
+        //9 / 작자미상 9 / 명언 9
+        //8 / 작자미상 8 / 명언 8
+        //7 / 작자미상 7 / 명언 7
+        //6 / 작자미상 6 / 명언 6
+        //----------------------
+        //페이지 : [1] / 2
         if(!params.equals(""))
         {
-            //명령) 목록?keywordType=author&keyword=작자
-            //----------------------
-            //검색타입 : author
-            //검색어 : 작자
-            //----------------------
-            //번호 / 작가 / 명언
-            //----------------------
-            //2 / 작자미상 / 과거에 집착하지 마라.
-            //1 / 작자미상 / 현재를 사랑하라.
+            boolean checkType = false;
             List<String[]> keyValues = SystemController.parsing(params);
-            System.out.println("------------------------");
+            StringBuilder searchTypeString = new StringBuilder();
+            searchTypeString.append("------------------------\n");
             String type = "";
             String param = "";
             for(String[] kv : keyValues)
@@ -148,17 +155,23 @@ public class WiseSayingController {
                 switch (key)
                 {
                     case "keywordType":
-                        System.out.println("검색타입 : "+value);
+                        searchTypeString.append("검색타입 : "+value+"\n");
+                        checkType = true;
                         type = value;
                         break;
                     case "keyword":
-                        System.out.println("검색어 : "+value);
+                        searchTypeString.append("검색어 : "+value+"\n");
+                        checkType = true;
                         param = value;
                         break;
+                    case "page":
+                        type = key;
+                        page = Integer.parseInt(value);
+
                 }
             }
-            System.out.println("------------------------");
-            List<WiseSaying> wList = null;
+            searchTypeString.append("------------------------\n");
+            if(checkType) answer.append(searchTypeString.toString());
             switch(type)
             {
                 case "content":
@@ -167,6 +180,11 @@ public class WiseSayingController {
                 case "author":
                     wList = wservice.authorFindByKeyword(param);
                     break;
+                case "page":
+                default:
+                    page = wservice.possiblePage(page);
+                    wList = wservice.getPage(page);
+                    break;
             }
             if(wList!=null)
             {
@@ -174,11 +192,24 @@ public class WiseSayingController {
             }
         }
         else{
-            answer.append(wservice.print());
+            page = wservice.possiblePage(page);
+            wList = wservice.getPage(page);
+            for(int i=wList.size()-1; i>=0; i--)answer.append(wList.get(i));
         }
+        answer.append("------------------------\n")
+                        .append("페이지 : ");
+        for(int i = 1; i <= totalPages; i++)
+        {
+            if(i!=1)answer.append(" / ");
+            if(i == page)
+                answer.append("["+i+"]");
+            else
+                answer.append(i);
+        }
+        answer.append("\n");
         System.out.println("번호 / 작가 / 명언");
         System.out.println("------------------------");
-        System.out.println(answer.toString());
+        System.out.print(answer.toString());
 
     }
 }

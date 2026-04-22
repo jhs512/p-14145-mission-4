@@ -35,7 +35,13 @@ public class WiseSaying {
         this.content = content;
         this.author = "작자미상";
     }
-
+    public WiseSaying()
+    {
+        this.idx = num;
+        this.content = "명언 "+num;
+        this.author = "작자미상 "+num;
+        num++;
+    }
     public int getIdx() {
         return idx;
     }

@@ -2,6 +2,7 @@ package com.back.domain.wiseSaying.repository;
 
 import com.back.domain.wiseSaying.entity.WiseSaying;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,11 +11,12 @@ import java.util.List;
 //스캐너 사용금지, 출력 금지
 public class WiseSayingRepository {
     List<WiseSaying> mydb;
-
+    public final static int PAGE_MAX_ELEMENT = 5;
 
     public WiseSayingRepository()
     {
         mydb = new ArrayList<>();
+        for(int i=0; i<10;i++)mydb.add(new WiseSaying());
     }
 
 
@@ -85,8 +87,6 @@ public class WiseSayingRepository {
         return answer;
     }
 
-
-
     private boolean contains(int idx)
     {
         for(WiseSaying ws : mydb)
@@ -113,5 +113,16 @@ public class WiseSayingRepository {
                 answer.add(ws);
         }
         return answer;
+    }
+
+    public List<WiseSaying> getPage(int pageNum) {
+        int page = pageNum * PAGE_MAX_ELEMENT;
+        List<WiseSaying> answer = new ArrayList<>();
+        for(int i = mydb.size() - page; i <= (mydb.size()-1)/pageNum ; i++) answer.add(mydb.get(i));
+        return answer;
+    }
+
+    public int getCntPages(){
+        return mydb.size()/PAGE_MAX_ELEMENT;
     }
 }
