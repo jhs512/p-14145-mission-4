@@ -29,49 +29,72 @@ public class WiseSayingController {
         System.out.println(id + "번 명언이 등록되었습니다.");
     }
 
-    // 명언 리스트
+    // 명언 리스트 (페이징 가능)
     public void showList(String command) {
         String keyword = getParam(command, "keyword", "");
+        String keywordType = getParam(command, "keywordType", "");
 
-        List<WiseSaying> wiseSayings = wiseSayingService.findAll();
-        List<WiseSaying> resultList;
+        List<WiseSaying> wiseSayings = wiseSayingService.findAll(keywordType, keyword);
 
         // keyword가 비어있지 않다면 검색 모드
         if (!keyword.isEmpty()) {
-            String keywordType = getParam(command, "keywordType", "");
-
             System.out.println("--------------------------");
             System.out.println("검색타입 : " + keywordType);
             System.out.println("검색어 : " + keyword);
             System.out.println("--------------------------");
-
-            List<WiseSaying> filteredList = new ArrayList<>();
-
-            for (WiseSaying ws : wiseSayings) {
-                if (keywordType.equals("content")) {
-                    if (ws.getContent().contains(keyword)) {
-                        filteredList.add(ws);
-                    }
-                } else if (keywordType.equals("author")) {
-                    if (ws.getAuthor().contains(keyword)) {
-                        filteredList.add(ws);
-                    }
-                }
-            }
-            resultList = filteredList;
         }
+
         // keyword가 비어있다면 일반 모드
-        else {
-            resultList = wiseSayings;
-        }
-        List<WiseSaying> sortedList = new ArrayList<>(resultList);
-        Collections.reverse(sortedList);
-
         System.out.println("번호 / 작가 / 명언");
         System.out.println("--------------------------");
-        for (WiseSaying wiseSaying : sortedList) {
-            System.out.println(wiseSaying.getId() + " / " + wiseSaying.getAuthor() + " / " +wiseSaying.getContent());
+
+
+        // 페이징 기능
+        int page = getParamAsInt(command, "page", 1);
+        // 페이지당 명언 수
+        int itemsPerPage = 5;
+        // 총 페이지 수
+        int totalItems = wiseSayings.size();
+        // (double)로 형변환하여 소수점까지 계산한 뒤, Math.ceil로 올림 처리한다.
+        int totalPage = (int) Math.ceil((double) totalItems / itemsPerPage);
+
+        // 명언이 0개 일 경우
+        if (totalPage == 0) {
+            totalPage = 1;
         }
+        
+        // 페이지가 음수일 경우 첫 페이지로, 페이지가 총 페이지보다 클 경우 끝 페이지로 변경
+        if(page < 1) {
+            page = 1;
+        } else if (page > totalPage) {
+            page = totalPage;
+        }
+        
+        // 해당 페이지의 처음 인덱스와 끝 인덱스
+        int startIndex = (page - 1) * itemsPerPage;
+        int endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+        
+        // 명언 출력
+        for (int i = startIndex; i < endIndex; i++) {
+            System.out.println(wiseSayings.get(i).getId() + " / " + wiseSayings.get(i).getAuthor() + " / " +wiseSayings.get(i).getContent());
+        }
+        
+        // 페이지 출력
+        System.out.println("--------------------------");
+        System.out.print("페이지 : ");
+        for (int i = 1; i <= totalPage; i++) {
+            if (i == page) {
+                System.out.print("[" + i + "]");
+            } else {
+                System.out.print(i);
+            }
+
+            // 마지막 번호가 아닐 때만 "/"를 붙임
+            if (i < totalPage) {
+                System.out.print(" / ");
+            }
+        }
+        System.out.println();
     }
 
     // 명언 수정

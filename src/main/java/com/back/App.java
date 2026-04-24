@@ -18,12 +18,14 @@ public class App {
 
         WiseSayingRepository wiseSayingRepository = new WiseSayingRepository();
         WiseSayingService wiseSayingService = new WiseSayingService(wiseSayingRepository);
+        wiseSayingService.makeSampleData();
 
         this.wiseSayingController = new WiseSayingController(wiseSayingService, sc);
         this.systemController = new SystemController();
     }
 
     public void run() {
+
         System.out.println("== 명언 앱 ==");
 
         while (true) {
