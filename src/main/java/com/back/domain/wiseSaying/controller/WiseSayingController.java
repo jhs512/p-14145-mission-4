@@ -71,7 +71,19 @@ public class WiseSayingController {
     }
 
     public void search (String input) {
+        String keywordType = input.substring("목록?keywordType=".length(), input.indexOf("&"));
+        String keyword = input.substring(input.indexOf("keyword=") + "keyword=".length());
 
+        System.out.println("----------------------");
+        System.out.println("검색타입 : " + keywordType);
+        System.out.println("검색어 : " + keyword);
+        System.out.println("----------------------");
+        System.out.println("번호 / 작가 / 명언");
+
+        List<WiseSaying> wiseSayings = wiseSayingService.findByKeyword(keywordType, keyword);
+        for (int i = wiseSayings.size(); i > 0; i--) {
+            System.out.println(wiseSayings.get(i - 1).getId() + " / " + wiseSayings.get(i - 1).getAuthor() + " / " + wiseSayings.get(i - 1).getContent());
+        }
     }
 
 

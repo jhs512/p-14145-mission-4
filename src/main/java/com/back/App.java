@@ -36,6 +36,8 @@ public class App {
                 wiseSayingController.delete(cmd);
             } else if (cmd.startsWith("수정?id=")) {
                 wiseSayingController.modify(cmd);
+            } else if (cmd.startsWith("목록?keywordType=")) {
+                wiseSayingController.search(cmd);
             }
         }
     }
