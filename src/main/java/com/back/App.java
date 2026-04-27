@@ -30,14 +30,16 @@ public class App {
                 exit = systemController.exit();
             } else if (cmd.equals("등록")) {
                 wiseSayingController.register();
-            } else if (cmd.equals("목록")) {
-                wiseSayingController.list();
             } else if (cmd.startsWith("삭제?id=")) {
                 wiseSayingController.delete(cmd);
             } else if (cmd.startsWith("수정?id=")) {
                 wiseSayingController.modify(cmd);
+            } else if (cmd.equals("목록")) {
+                wiseSayingController.list(cmd);
             } else if (cmd.startsWith("목록?keywordType=")) {
                 wiseSayingController.search(cmd);
+            } else if (cmd.startsWith("목록?page=")) {
+                wiseSayingController.list(cmd);
             }
         }
     }

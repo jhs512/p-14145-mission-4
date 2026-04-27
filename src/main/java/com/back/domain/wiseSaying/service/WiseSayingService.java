@@ -1,6 +1,7 @@
 package com.back.domain.wiseSaying.service;
 
 
+import com.back.domain.wiseSaying.entity.Page;
 import com.back.domain.wiseSaying.entity.WiseSaying;
 import com.back.domain.wiseSaying.repository.WiseSayingRepository;
 
@@ -62,5 +63,21 @@ public class WiseSayingService {
             return newWiseSayings;
         }
         return null;
+    }
+
+    public Page getPage() {
+        return getPage(1);
+    }
+
+    public Page getPage(int pageNumber) {
+        List<WiseSaying> wiseSayings = wiseSayingRepository.findAll();
+        List<WiseSaying> filteredList = new ArrayList<>();
+
+        for (int i = (pageNumber - 1) * 5; i < pageNumber * 5; i++) {
+            filteredList.add(wiseSayings.get(i));
+        }
+        int totalPage = (int)Math.ceil((double)wiseSayings.size() / 5);
+
+        return new Page(filteredList, pageNumber, totalPage);
     }
 }

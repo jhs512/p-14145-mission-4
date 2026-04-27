@@ -1,5 +1,6 @@
 package com.back.domain.wiseSaying.controller;
 
+import com.back.domain.wiseSaying.entity.Page;
 import com.back.domain.wiseSaying.entity.WiseSaying;
 import com.back.domain.wiseSaying.service.WiseSayingService;
 
@@ -28,14 +29,40 @@ public class WiseSayingController {
         System.out.println(count + "번 명언이 등록되었습니다.");
     }
 
-    public void list() {
+    public void list(String input) {
+        if (input.equals("목록")) {
+            Page page = wiseSayingService.getPage();
+            printPage(page);
+        } else {
+            String pageNumber = input.substring("목록?page=".length());
+            int number = Integer.parseInt(pageNumber);
+            Page page = wiseSayingService.getPage(number);
+            printPage(page);
+        }
+    }
+
+    public void printPage(Page page) {
+        List<WiseSaying> wiseSayings = page.getWiseSayings();
+
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
-
-        List<WiseSaying> wiseList = wiseSayingService.getList();
-        for (int i = wiseList.size(); i > 0; i--) {
-            System.out.println(wiseList.get(i - 1).getId() + " / " + wiseList.get(i - 1).getAuthor() + " / " + wiseList.get(i - 1).getContent());
+        for (int i = wiseSayings.size(); i > 0; i--) {
+            System.out.println(wiseSayings.get(i - 1).getId() + " / " + wiseSayings.get(i - 1).getAuthor() + " / " + wiseSayings.get(i - 1).getContent());
         }
+        System.out.println("----------------------");
+
+        StringBuilder sb = new StringBuilder("페이지");
+        for (int i = 1; i < page.getTotalPage(); i++) {
+            if (i == page.getCurrentPage()) {
+                sb.append("[").append(i).append("]");
+            } else {
+                sb.append(i);
+            }
+            if (i < page.getTotalPage()) {
+                sb.append(" / ");
+            }
+        }
+        System.out.println(sb.toString());
     }
 
     public void delete(String input) {
@@ -85,6 +112,4 @@ public class WiseSayingController {
             System.out.println(wiseSayings.get(i - 1).getId() + " / " + wiseSayings.get(i - 1).getAuthor() + " / " + wiseSayings.get(i - 1).getContent());
         }
     }
-
-
 }
