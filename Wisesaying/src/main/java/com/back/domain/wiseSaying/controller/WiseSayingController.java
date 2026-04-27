@@ -25,15 +25,20 @@ public class WiseSayingController {
         System.out.println(wiseCount + "번 명언이 등록되었습니다.");
     }
 
-    public void getWiseSaying() {
-        System.out.println("번호 / 작가 / 명언");
-        System.out.println("----------------------");
-
+    public void getWiseSaying(int page) {
         List<String> getWise = wiseSayingService.getService(wiseCount);
 
-        for (String gw : getWise) {
-            System.out.println(gw);
-        }
+        pagePrint(page, getWise);
+    }
+
+    public void searchWiseSaying(String type, String search, int page) {
+        System.out.println("----------------------");
+        System.out.println("검색타입 : " + type);
+        System.out.println("검색어 : " + search);
+
+        List<String> getWise = wiseSayingService.getSearchService(wiseCount, type, search);
+
+        pagePrint(page, getWise);
     }
 
     public void deleteWiseSaying(int id) {
@@ -59,17 +64,15 @@ public class WiseSayingController {
         }
     }
 
-    public void searchWiseSaying(String type, String search) {
-        System.out.println("검색타입 : " + type);
-        System.out.println("검색어 : " + search);
-
+    private void pagePrint(int page, List<String> getWise) {
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
 
-        List<String> getWise = wiseSayingService.getSearchService(wiseCount, type, search);
-
-        for (String gw : getWise) {
-            System.out.println(gw);
+        for (int i = (page - 1) * 5; i < Math.min((page - 1) * 5 + 5, getWise.size()); i++) {
+            System.out.println(getWise.get(i));
         }
+
+        System.out.println("----------------------");
+        System.out.println("페이지 : " + page + " / [" + (int)Math.ceil((double)getWise.size() / 5) + "]");
     }
 }
