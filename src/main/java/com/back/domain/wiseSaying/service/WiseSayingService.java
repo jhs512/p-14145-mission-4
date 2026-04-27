@@ -73,11 +73,23 @@ public class WiseSayingService {
         List<WiseSaying> wiseSayings = wiseSayingRepository.findAll();
         List<WiseSaying> filteredList = new ArrayList<>();
 
-        for (int i = (pageNumber - 1) * 5; i < pageNumber * 5; i++) {
+        int total =  wiseSayings.size();
+        int startIndex = total - (pageNumber - 1) * 5 - 1;
+        int endIndex = Math.max(startIndex - 5, -1);
+
+        for (int i = startIndex; i > endIndex; i--) {
             filteredList.add(wiseSayings.get(i));
         }
-        int totalPage = (int)Math.ceil((double)wiseSayings.size() / 5);
 
+        int totalPage = (int)Math.ceil((double)wiseSayings.size() / 5);
         return new Page(filteredList, pageNumber, totalPage);
+    }
+
+    public void initSampleData() {
+        if (wiseSayingRepository.findAll().size() == 0) {
+            for (int i = 1; i <= 10; i++) {
+                register(i, "명언 " + i, "작자미상 " + i);
+            }
+        }
     }
 }

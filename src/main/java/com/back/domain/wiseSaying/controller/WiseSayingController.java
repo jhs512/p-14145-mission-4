@@ -14,9 +14,13 @@ public class WiseSayingController {
         this.wiseSayingService = wiseSayingService;
     }
 
-    private int count = 0;
+    private int count = 10;
 
     Scanner scanner = new Scanner(System.in);
+
+    public void initSampleData() {
+        wiseSayingService.initSampleData();
+    }
 
     public void register() {
         System.out.print("명언 : ");
@@ -46,13 +50,13 @@ public class WiseSayingController {
 
         System.out.println("번호 / 작가 / 명언");
         System.out.println("----------------------");
-        for (int i = wiseSayings.size(); i > 0; i--) {
-            System.out.println(wiseSayings.get(i - 1).getId() + " / " + wiseSayings.get(i - 1).getAuthor() + " / " + wiseSayings.get(i - 1).getContent());
+        for  (WiseSaying wiseSaying : wiseSayings) {
+            System.out.println(wiseSaying.getId() + " / " + wiseSaying.getAuthor() + " / " + wiseSaying.getContent());
         }
         System.out.println("----------------------");
 
-        StringBuilder sb = new StringBuilder("페이지");
-        for (int i = 1; i < page.getTotalPage(); i++) {
+        StringBuilder sb = new StringBuilder("페이지: ");
+        for (int i = 1; i <= page.getTotalPage(); i++) {
             if (i == page.getCurrentPage()) {
                 sb.append("[").append(i).append("]");
             } else {

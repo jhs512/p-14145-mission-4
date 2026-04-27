@@ -23,6 +23,8 @@ public class App {
         boolean exit = false;
         while (!exit) {
             System.out.println("== 명언 앱 ==");
+            wiseSayingController.initSampleData();
+
             System.out.print("명령) ");
             String cmd = scanner.nextLine().trim();
 
