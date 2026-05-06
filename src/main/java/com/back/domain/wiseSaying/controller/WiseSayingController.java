@@ -4,13 +4,13 @@ import com.back.AppContext;
 import com.back.Rq;
 import com.back.WiseSaying;
 import com.back.domain.wiseSaying.service.WiseSayingService;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 
 public class WiseSayingController {
 
+    private static final int PAGE_SIZE = 5;
     private final Scanner scanner;
     private final WiseSayingService wiseSayingService;
     public WiseSayingController(){
@@ -18,18 +18,52 @@ public class WiseSayingController {
         this.wiseSayingService = new WiseSayingService();
     }
 
-    public void actionList() {
-        System.out.println("번호 / 작가 / 명언 / 작성 / 수정");
-        System.out.println("-----------------------------");
+    public void actionList(Rq rq) {
+        String keywordType = rq.getParam("keywordType", "");
+        String keyword = rq.getParam("keyword", "");
 
-        List<WiseSaying> forListWiseSayings = wiseSayingService.findForList();
-
-        for (WiseSaying wiseSaying : forListWiseSayings) {
-            System.out.printf("%d / %s / %s / %s / %s \n"
-                    , wiseSaying.getId(), wiseSaying.getAuthor()
-                    , wiseSaying.getContent(), wiseSaying.getForPrintCreateDate()
-            , wiseSaying.getForPrintModifyDate());
+        if (!keywordType.isEmpty() && !keyword.isEmpty()) {
+            System.out.println("----------------------");
+            System.out.println("검색타입 : " + keywordType);
+            System.out.println("검색어 : " + keyword);
+            System.out.println("----------------------");
         }
+
+        int page = rq.getParamAsInt("page", 1);
+        if (page < 1) page = 1;
+
+        List<WiseSaying> forListWiseSayings = wiseSayingService.findForList(keywordType, keyword);
+        int totalItems = forListWiseSayings.size();
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalItems / PAGE_SIZE));
+        if (page > totalPages) page = totalPages;
+        int fromIndex = Math.min((page - 1) * PAGE_SIZE, totalItems);
+        int toIndex = Math.min(fromIndex + PAGE_SIZE, totalItems);
+        List<WiseSaying> pagedWiseSayings = forListWiseSayings.subList(fromIndex, toIndex);
+
+        System.out.println("번호 / 작가 / 명언");
+        System.out.println("----------------------");
+
+        for (WiseSaying wiseSaying : pagedWiseSayings) {
+            System.out.printf("%d / %s / %s\n"
+                    , wiseSaying.getId(), wiseSaying.getAuthor()
+                    , wiseSaying.getContent());
+        }
+
+        System.out.println("----------------------");
+        System.out.println("페이지 : " + genPageMenu(page, totalPages));
+    }
+
+    private String genPageMenu(int currentPage, int totalPages) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 1; i <= totalPages; i++) {
+            if (i > 1) sb.append(" / ");
+
+            if (i == currentPage) sb.append("[").append(i).append("]");
+            else sb.append(i);
+        }
+
+        return sb.toString();
     }
 
     public void actionWrite() {

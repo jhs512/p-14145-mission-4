@@ -13,6 +13,7 @@ public class App {
         System.out.println("== 명언 앱 ==");
         SystemController systemController = AppContext.systemController;
         WiseSayingController wiseSayingController = AppContext.wiseSayingController;
+        AppContext.wiseSayingService.makeSampleData();
 
         while (true) {
             System.out.print("명령) ");
@@ -23,7 +24,7 @@ public class App {
                     systemController.actionExit();
                     return;
                 }
-                case "목록" -> wiseSayingController.actionList();
+                case "목록" -> wiseSayingController.actionList(rq);
                 case "등록" -> wiseSayingController.actionWrite();
                 case "삭제" -> wiseSayingController.actionDelete(rq);
                 case "수정" ->wiseSayingController.actionModify(rq);

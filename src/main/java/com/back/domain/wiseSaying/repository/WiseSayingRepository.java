@@ -10,7 +10,29 @@ public class WiseSayingRepository {
     public int lastId = 0;
     private final List<WiseSaying> wiseSayings = new ArrayList<>();
     public List<WiseSaying> findForList() {
-        return wiseSayings.reversed();
+        return findForList("", "");
+    }
+
+    public List<WiseSaying> findForList(String keywordType, String keyword) {
+        return wiseSayings
+                .reversed()
+                .stream()
+                .filter(wiseSaying -> isMatched(wiseSaying, keywordType, keyword))
+                .toList();
+    }
+
+    public int count() {
+        return wiseSayings.size();
+    }
+
+    private boolean isMatched(WiseSaying wiseSaying, String keywordType, String keyword) {
+        if (keywordType.isEmpty() || keyword.isEmpty()) return true;
+
+        return switch (keywordType) {
+            case "content" -> wiseSaying.getContent().contains(keyword);
+            case "author" -> wiseSaying.getAuthor().contains(keyword);
+            default -> true;
+        };
     }
 
     public void save(WiseSaying wiseSaying) {
